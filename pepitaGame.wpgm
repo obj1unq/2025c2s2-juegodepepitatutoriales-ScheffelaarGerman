@@ -1,25 +1,48 @@
 import wollok.game.*
 import pepita.*
 
+
+
 program pepitaGame {
-	game.title("Pepita") 	//Valor por defecto "Wollok Game"
-	game.height(10) 		//valor por defecto 5
-	game.width(10) 			//valor por defecto 5
-	game.cellSize(50) 		//valor por defecto 50
-	game.boardGround("fondo.jpg")
+    game.title("Pepita")
+    game.height(10)
+    game.width(10)
+    game.cellSize(50)
+    game.boardGround("fondo.jpg")
 
+    game.addVisual(nido)
+    game.addVisual(silvestre)
+    game.addVisual(pepita)
+    game.addVisual(manzana)
+    game.addVisual(alpiste)
+    
 
-	game.addVisual(nido)
-	game.addVisual(silvestre)
-	game.addVisualCharacter(pepita)
+    keyboard.up().onPressDo({
+        if (pepita.tieneEnergiaParaVolar()) {
+            pepita.subir()
+            silvestre.perseguir(pepita)
+        }
+    })
+    keyboard.down().onPressDo({
+        if (pepita.tieneEnergiaParaVolar()) {
+            pepita.bajar()
+            silvestre.perseguir(pepita)
+        }
+    })
+    keyboard.right().onPressDo({
+        if (pepita.tieneEnergiaParaVolar()) {
+            pepita.derecha()
+            silvestre.perseguir(pepita)
+        }
+    })
+    keyboard.left().onPressDo({
+        if (pepita.tieneEnergiaParaVolar()) {
+            pepita.izquierda()
+            silvestre.perseguir(pepita)
+        }
+    })
 
-	
-	keyboard.up().onPressDo({=> pepita.subir(); silvestre.perseguir(pepita) })
-	keyboard.down().onPressDo({=> pepita.bajar(); silvestre.perseguir(pepita)})
-	keyboard.right().onPressDo({=> pepita.derecha(); silvestre.perseguir(pepita)})
-	keyboard.left().onPressDo({=>pepita.izquierda(); silvestre.perseguir(pepita)})
+    game.onCollideDo(pepita, { elemento => elemento.colisionarCon(pepita) })
 
-
-	
-	game.start()	
+    game.start()
 }
