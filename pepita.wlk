@@ -1,119 +1,134 @@
 import wollok.game.*
 
+// ** Pepita **
 object pepita {
-    var energia = 500
-    var property position = game.at(1, 5)
+    var property position = game.at(0, 4)
+    var property energia = 500  
+
+    const muros = [muro1, muro2, muro3, muro4]
+
+    method volar(direccion) {
+        const nuevaPos = direccion.siguiente(position)  
+     
+        if (!self.hayMuroEn(nuevaPos) && energia >= 9) {  
+            position = nuevaPos
+            energia -= 9
+          
+            if (self.estaAgotada()) {
+                game.stop()
+            }
+        }
+    }
+
+    method hayMuroEn(pos) {
+        return muros.any({ muro => muro.position() == pos })
+    }
+
+    method caerPorGravedad() {
+        const nuevaPos = position.down(1)
+        if (position.y() > 2 && !self.hayMuroEn(nuevaPos)) {
+            position = nuevaPos  
+        }
+    }
+
+    method estaAgotada() {
+        return energia < 9  
+    }
 
     method image() {
-        if (self.fueAtrapada() || self.sinEnergia()) {
+        if (self.estaAgotada() || self.esAtrapada()) {
             return "pepita-gris.png"
-        }
-        if (self.estaEnElNido()) {
-            return "pepita-grande.png"
-        }
-        return "pepita.png"
-    }
-
-    method volar(km) {
-        energia = energia - km * 9
-        if (energia <= 0) {
-        energia = 0
-        self.quedarseSinEnergia()
+        } else {
+            return "pepita.png"
         }
     }
 
-    method energia() {
-        return energia
-    }
-
-    method sinEnergia() {
-        return energia <= 0
-    }
-
-    method fueAtrapada() {
+    method esAtrapada() {
         return position == silvestre.position()
     }
-
-    method estaEnElNido() {
-        return position == nido.position()
-    }
-
-    method subir() {self.mover(position.up(1))}
-
-    method bajar() { self.mover(position.down(1)) }
-
-    method derecha() { self.mover(position.right(1)) }
-
-    method izquierda() { self.mover(position.left(1)) }
-
-    method mover(siguientePosicion) {
-        if (self.puedeMoverseA(siguientePosicion)) {
-            self.volarHasta(siguientePosicion)
-        }
-    }
-
-    method puedeMoverseA(siguientePosicion) {
-        return not self.sinEnergia() && self.esPosicionValida(siguientePosicion)
-    }
-
-    method esPosicionValida(unaPosicion) {
-        return unaPosicion.x() >= 0
-            && unaPosicion.x() < game.width()
-            && unaPosicion.y() >= 0
-            && unaPosicion.y() < game.height()
-    }
-
-    method volarHasta(destino) {
-        const distancia = self.distanciaA(destino)
-        position = destino
-        self.volar(distancia)
-    }
-
-     method quedarseSinEnergia() {
-        game.stop()
-    }
-
-    method distanciaA(nuevaPosicion) {
-        const distanciaEnX = (nuevaPosicion.x() - position.x()).abs()
-        const distanciaEnY = (nuevaPosicion.y() - position.y()).abs()
-        return distanciaEnX + distanciaEnY
-    }
-
-    method gravedad() {
-        const posicionDestino = position.down(1)
-        const posicionActualizada = game.at(posicionDestino.x(), posicionDestino.y().max(2))
-        if (self.esPosicionValida(posicionActualizada)) {
-            position = posicionActualizada
-        }
-    }
-    
 }
 
+//** Muros **//
+object muro1 {
+    const property position = game.at(4, 2)  
+    method image() = "muro.png"
+}
+
+object muro2 {
+    const property position = game.at(6, 4) 
+    method image() = "muro.png"
+}
+
+object muro3 {
+    const property position = game.at(8, 6) 
+    method image() = "muro.png"
+}
+
+object muro4 {
+    const property position = game.at(2, 6) 
+    method image() = "muro.png"
+}
+
+//** Silvestre **//
 object silvestre {
-    var property position = game.at(6, 2)
+    const limiteALaIzquierda = 3
+    const alturaPiso = 2
+    var property position = game.at(limiteALaIzquierda, alturaPiso)  
+
+    method perseguir(personaje) {
+        const xPersonaje = personaje.position().x()
+        const xSilvestre = position.x()
+        
+        if (xPersonaje > xSilvestre) {
+            position = derecha.siguiente(position)
+        } else if (xPersonaje < xSilvestre) {
+            const nuevaPos = izquierda.siguiente(position)
+            position = game.at(nuevaPos.x().max(limiteALaIzquierda), alturaPiso)
+        }
+    }
 
     method image() {
         return "silvestre.png"
     }
+}
 
-    method perseguir(personaje) {
-        if (personaje.position().x() > position.x()) {
-            self.mover(position.right(1))
-        } else if (personaje.position().x() < position.x()) {
-            self.mover(position.left(1))
+// ** Direcciones **//
+object izquierda {
+    method siguiente(posicion) {
+        if (posicion.x() > 0) {
+            return posicion.left(1)
+        } else {
+            return posicion
         }
-    }
-
-    method mover(siguientePosicion) {
-        const nuevaX = siguientePosicion.x().min(game.width() - 1).max(3)
-        position = game.at(nuevaX, 2)
     }
 }
 
-object nido {
-    const property position = game.at(8, 8)
+object derecha {
+    method siguiente(posicion) {
+        if (posicion.x() < game.width() - 1) {
+            return posicion.right(1)
+        } else {
+            return posicion
+        }
+    }
+}
 
-    method image() {
-        return "nido.png"
+object abajo {
+    method siguiente(posicion) {
+        if (posicion.y() > 0) {
+            return posicion.down(1)
+        } else {
+            return posicion
+        }
+    }
+}
+
+object arriba {
+    method siguiente(posicion) {
+        if (posicion.y() < game.height() - 1) {
+            return posicion.up(1)
+        } else {
+            return posicion
+        }
     }
 }

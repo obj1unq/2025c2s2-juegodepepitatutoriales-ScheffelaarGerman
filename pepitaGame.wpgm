@@ -7,17 +7,21 @@ program pepitaGame {
     game.width(10)
     game.cellSize(50)
     game.boardGround("fondo.jpg")
-
-    game.addVisual(nido)
+    
     game.addVisual(silvestre)
     game.addVisual(pepita)
-
-    keyboard.up().onPressDo({ pepita.subir() silvestre.perseguir(pepita) })
-    keyboard.down().onPressDo({  pepita.bajar() silvestre.perseguir(pepita) })
-    keyboard.right().onPressDo({ pepita.derecha() silvestre.perseguir(pepita) })
-    keyboard.left().onPressDo({pepita.izquierda() silvestre.perseguir(pepita) })
-
-    game.onTick(800, "caerPorGravedad", { pepita.gravedad() })
-
+    
+    game.addVisual(muro1)
+    game.addVisual(muro2)
+    game.addVisual(muro3)
+    game.addVisual(muro4)
+    
+    game.onTick(800, "efectoGravedad", { pepita.caerPorGravedad() })
+    
+    keyboard.up().onPressDo({ pepita.volar(arriba) silvestre.perseguir(pepita) })
+    keyboard.down().onPressDo({ pepita.volar(abajo) silvestre.perseguir(pepita) })
+    keyboard.right().onPressDo({ pepita.volar(derecha) silvestre.perseguir(pepita) })
+    keyboard.left().onPressDo({ pepita.volar(izquierda) silvestre.perseguir(pepita) })
+    
     game.start()
 }
