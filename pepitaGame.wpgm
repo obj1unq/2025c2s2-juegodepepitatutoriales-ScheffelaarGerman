@@ -1,8 +1,6 @@
 import wollok.game.*
 import pepita.*
 
-
-
 program pepitaGame {
     game.title("Pepita")
     game.height(10)
@@ -13,36 +11,13 @@ program pepitaGame {
     game.addVisual(nido)
     game.addVisual(silvestre)
     game.addVisual(pepita)
-    game.addVisual(manzana)
-    game.addVisual(alpiste)
-    
 
-    keyboard.up().onPressDo({
-        if (pepita.tieneEnergiaParaVolar()) {
-            pepita.subir()
-            silvestre.perseguir(pepita)
-        }
-    })
-    keyboard.down().onPressDo({
-        if (pepita.tieneEnergiaParaVolar()) {
-            pepita.bajar()
-            silvestre.perseguir(pepita)
-        }
-    })
-    keyboard.right().onPressDo({
-        if (pepita.tieneEnergiaParaVolar()) {
-            pepita.derecha()
-            silvestre.perseguir(pepita)
-        }
-    })
-    keyboard.left().onPressDo({
-        if (pepita.tieneEnergiaParaVolar()) {
-            pepita.izquierda()
-            silvestre.perseguir(pepita)
-        }
-    })
+    keyboard.up().onPressDo({ pepita.subir() silvestre.perseguir(pepita) })
+    keyboard.down().onPressDo({  pepita.bajar() silvestre.perseguir(pepita) })
+    keyboard.right().onPressDo({ pepita.derecha() silvestre.perseguir(pepita) })
+    keyboard.left().onPressDo({pepita.izquierda() silvestre.perseguir(pepita) })
 
-    game.onCollideDo(pepita, { elemento => elemento.colisionarCon(pepita) })
+    game.onTick(800, "caerPorGravedad", { pepita.gravedad() })
 
     game.start()
 }
