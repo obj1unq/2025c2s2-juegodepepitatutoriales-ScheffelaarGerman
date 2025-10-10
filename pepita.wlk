@@ -7,17 +7,18 @@ object pepita {
     var property position = game.at(0, 4)
     var property energia = 500
     var property estado = libre
-    const comidas = [manzana, alpiste]
+
+    method atravesable() = true
 
     method image() {
-    if (estado == libre) {
-        return if (self.estaAgotada()) "pepita-gris.png" else "pepita.png"
-    } else if (estado == ganadora) {
-        return "pepita-grande.png"
-    } else {
-        return "pepita-gris.png" 
+        if (estado == libre) {
+            return if (self.estaAgotada()) "pepita-gris.png" else "pepita.png"
+        } else if (estado == ganadora) {
+            return "pepita-grande.png"
+        } else {
+            return "pepita-gris.png" 
+        }
     }
-}
 
     method volar(direccion) {
         const nuevaPos = direccion.siguiente(position)
@@ -48,15 +49,11 @@ object pepita {
         }
     }
 
-    method estaAgotada() {
-        return energia < 9
-    }
+    method estaAgotada() = energia < 9
 
     method comer(comida) {
         energia += comida.energiaQueOtorga()
-        if (game.hasVisual(comida)) {
-            game.removeVisual(comida)
-        }
+        comidas.remover(comida)
     }
 
     method ganar() {
@@ -77,9 +74,15 @@ object pepita {
         otro.colisionarCon(self)
     }
 
+    //method quedanComidas() {
+    //    return game.allVisuals().any({ visual => visual.className() == Manzana || visual.className() == Alpiste })
+    //}
+
     method quedanComidas() {
-        return comidas.any({ comida => game.hasVisual(comida) })
-    }
+    return game.allVisuals().any({ visual => 
+        visual.className() == Manzana.className() or visual.className() == Alpiste.className()
+    })
+}
 }
 
 object nido {
@@ -119,7 +122,7 @@ object silvestre {
 }
 
 object muro1 {
-    const property position = game.at(3, 3)
+    const property position = game.at(4, 2)
     method image() = "muro.png"
     method atravesable() = false
     method colisionarCon(pepita) {}

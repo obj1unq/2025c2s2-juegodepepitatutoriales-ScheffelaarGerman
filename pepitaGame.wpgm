@@ -5,12 +5,13 @@ import direcciones.*
 import extras.*
 
 program pepitaGame {
-    game.title("Pepita")
+    game.title("Pepita - Tutorial 4")
     game.height(10)
     game.width(10)
     game.cellSize(50)
     game.boardGround("fondo.jpg")
 
+    
     game.addVisual(nido)
     game.addVisual(silvestre)
     game.addVisual(pepita)
@@ -18,15 +19,28 @@ program pepitaGame {
     game.addVisual(muro2)
     game.addVisual(muro3)
     game.addVisual(muro4)
-    game.addVisual(manzana)
-    game.addVisual(alpiste)
 
-    keyboard.up().onPressDo({ pepita.volar(arriba) silvestre.perseguir(pepita) })
-    keyboard.down().onPressDo({ pepita.volar(abajo) silvestre.perseguir(pepita) })
-    keyboard.right().onPressDo({ pepita.volar(derecha) silvestre.perseguir(pepita) })
-    keyboard.left().onPressDo({ pepita.volar(izquierda) silvestre.perseguir(pepita) })
+    
+    keyboard.up().onPressDo({ 
+        pepita.volar(arriba) 
+        silvestre.perseguir(pepita) 
+    })
+    keyboard.down().onPressDo({ 
+        pepita.volar(abajo) 
+        silvestre.perseguir(pepita) 
+    })
+    keyboard.right().onPressDo({ 
+        pepita.volar(derecha) 
+        silvestre.perseguir(pepita) 
+    })
+    keyboard.left().onPressDo({ 
+        pepita.volar(izquierda) 
+        silvestre.perseguir(pepita) 
+    })
 
+    
     gravedad.comenzar()
+    comidas.comenzar() 
     game.onCollideDo(pepita, { otro => otro.colisionarCon(pepita) })
 
     game.start()
