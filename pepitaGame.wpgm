@@ -1,14 +1,47 @@
 import wollok.game.*
 import pepita.*
+import comidas.*
+import direcciones.*
+import extras.*
 
 program pepitaGame {
-	game.title("Pepita") 	//Valor por defecto "Wollok Game"
-	game.height(10) 		//valor por defecto 5
-	game.width(10) 			//valor por defecto 5
-	game.cellSize(50) 		//valor por defecto 50
-	//search assets in assets folder, for example, for the background
-	//Valor por defecto game.ground("ground.png")
-	
-	//game.addVisual(pepita)
-	game.start()	
+    game.title("Pepita - Tutorial 4")
+    game.height(10)
+    game.width(10)
+    game.cellSize(50)
+    game.boardGround("fondo.jpg")
+
+    
+    game.addVisual(nido)
+    game.addVisual(silvestre)
+    game.addVisual(pepita)
+    game.addVisual(muro1)
+    game.addVisual(muro2)
+    game.addVisual(muro3)
+    game.addVisual(muro4)
+
+    
+    keyboard.up().onPressDo({ 
+        pepita.volar(arriba) 
+        silvestre.perseguir(pepita) 
+    })
+    keyboard.down().onPressDo({ 
+        pepita.volar(abajo) 
+        silvestre.perseguir(pepita) 
+    })
+    keyboard.right().onPressDo({ 
+        pepita.volar(derecha) 
+        silvestre.perseguir(pepita) 
+    })
+    keyboard.left().onPressDo({ 
+        pepita.volar(izquierda) 
+        silvestre.perseguir(pepita) 
+    })
+
+    
+    gravedad.comenzar()
+    comidas.comenzar() 
+    game.onCollideDo(pepita, { otro => otro.colisionarCon(pepita) })
+
+    game.start()
 }
